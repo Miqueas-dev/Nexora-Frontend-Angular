@@ -1,0 +1,66 @@
+@if (cargandoSesion) {
+  <div class="loading-screen">
+    <div class="spinner-border text-success" role="status"></div>
+    <span class="ms-3">Cargando Nexora...</span>
+  </div>
+} @else {
+  @if (authService.usuarioActual) {
+    <div class="app-shell">
+      <aside class="sidebar">
+        <div class="brand-block">
+          <div class="brand-mark">N</div>
+          <div>
+            <div class="brand-name">Nexora</div>
+            <div class="brand-subtitle">Back Office</div>
+          </div>
+        </div>
+
+        <div class="user-box">
+          <div class="user-name">{{ authService.usuarioActual.nombre }}</div>
+          <span class="badge badge-role">{{ authService.usuarioActual.rol }}</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          @if (authService.usuarioActual.rol === 'ADMIN') {
+            <a routerLink="/admin" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Resumen</a>
+            <a routerLink="/admin/productos" routerLinkActive="active">Productos</a>
+            <a routerLink="/admin/usuarios" routerLinkActive="active">Usuarios</a>
+            <a routerLink="/admin/ventas" routerLinkActive="active">Ventas</a>
+          }
+
+          @if (authService.usuarioActual.rol === 'VENDEDOR') {
+            <a routerLink="/vendedor" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Resumen</a>
+            <a routerLink="/vendedor/nueva-venta" routerLinkActive="active">Nueva venta</a>
+            <a routerLink="/vendedor/mis-ventas" routerLinkActive="active">Mis ventas</a>
+          }
+
+          @if (authService.usuarioActual.rol === 'CLIENTE') {
+            <a routerLink="/cliente" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">Inicio</a>
+            <a routerLink="/cliente/catalogo" routerLinkActive="active">Catálogo</a>
+            <a routerLink="/cliente/mis-compras" routerLinkActive="active">Mis compras</a>
+          }
+        </nav>
+
+        <button class="btn btn-outline-light w-100 mt-auto" type="button" (click)="cerrarSesion()">
+          Cerrar sesión
+        </button>
+      </aside>
+
+      <main class="main-content">
+        <header class="topbar">
+          <div>
+            <strong>Sistema de gestión Nexora</strong>
+            <span class="text-muted ms-2 d-none d-md-inline">Operación segura y centralizada</span>
+          </div>
+          <div class="small text-muted">{{ authService.usuarioActual.correo }}</div>
+        </header>
+
+        <section class="content-area">
+          <router-outlet></router-outlet>
+        </section>
+      </main>
+    </div>
+  } @else {
+    <router-outlet></router-outlet>
+  }
+}

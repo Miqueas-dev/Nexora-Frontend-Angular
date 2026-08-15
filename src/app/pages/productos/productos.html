@@ -1,0 +1,27 @@
+<div class="d-flex justify-content-between align-items-center mb-4"><div><h2 class="page-title">Productos</h2><p class="page-subtitle">Inventario, precios, marcas y estado comercial.</p></div></div>
+
+<div class="card nexora-card mb-4"><div class="card-body">
+  <h5 class="mb-3">{{ idEditando === 0 ? 'Nuevo producto' : 'Editar producto' }}</h5>
+  <div class="row g-3">
+    <div class="col-md-4"><label class="form-label">Descripción</label><input class="form-control" [(ngModel)]="descripcion"></div>
+    <div class="col-md-2"><label class="form-label">Stock</label><input class="form-control" type="number" min="0" [(ngModel)]="stock"></div>
+    <div class="col-md-2"><label class="form-label">Precio</label><input class="form-control" type="number" min="0" step="0.01" [(ngModel)]="precio"></div>
+    <div class="col-md-2"><label class="form-label">Marca</label><select class="form-select" [(ngModel)]="idMarca"><option [ngValue]="0">Seleccione</option>@for(marca of marcas; track marca.idMarca){<option [ngValue]="marca.idMarca">{{ marca.marcaDesc }}</option>}</select></div>
+    <div class="col-md-2"><label class="form-label">Estado</label><select class="form-select" [(ngModel)]="idEstado"><option [ngValue]="0">Seleccione</option>@for(estado of estados; track estado.idEstado){<option [ngValue]="estado.idEstado">{{ estado.descripcion }}</option>}</select></div>
+  </div>
+  <div class="mt-3"><button class="btn btn-nexora me-2" (click)="guardar()">{{ idEditando === 0 ? 'Registrar' : 'Guardar cambios' }}</button>@if(idEditando !== 0){<button class="btn btn-outline-secondary" (click)="limpiar()">Cancelar</button>}</div>
+</div></div>
+
+<div class="card nexora-card mb-4"><div class="card-body">
+  <div class="row g-2 align-items-end"><div class="col-md-8"><label class="form-label">Buscar por descripción</label><input class="form-control" [(ngModel)]="busqueda" (keyup.enter)="buscar()"></div><div class="col-md-4"><button class="btn btn-outline-secondary me-2" (click)="buscar()">Buscar</button><button class="btn btn-outline-secondary" (click)="busqueda=''; cargarProductos()">Limpiar</button></div></div>
+</div></div>
+
+<div class="card nexora-card mb-4"><div class="card-body table-responsive">
+  <table class="table table-hover align-middle mb-0"><thead><tr><th>ID</th><th>Producto</th><th>Marca</th><th>Stock</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>
+    @for(producto of productos; track producto.idProducto){<tr><td>{{ producto.idProducto }}</td><td>{{ producto.descripProducto }}</td><td>{{ producto.marca.marcaDesc }}</td><td><span class="badge" [class.text-bg-danger]="producto.stockProducto === 0" [class.text-bg-success]="producto.stockProducto > 0">{{ producto.stockProducto }}</span></td><td>S/ {{ producto.precioProducto | number:'1.2-2' }}</td><td>{{ producto.estado.descripcion }}</td><td><button class="btn btn-sm btn-outline-primary me-2" (click)="editar(producto)">Editar</button><button class="btn btn-sm btn-outline-danger" (click)="eliminar(producto)">Eliminar</button></td></tr>}
+  </tbody></table>
+</div></div>
+
+<div class="card nexora-card"><div class="card-body"><h5>Marcas</h5><p class="text-muted">Administración compacta del catálogo de marcas, sin crear una pantalla adicional.</p><div class="row g-2"><div class="col-md-8"><input class="form-control" placeholder="Nueva marca" [(ngModel)]="nuevaMarca"></div><div class="col-md-4"><button class="btn btn-nexora" (click)="registrarMarca()">Agregar marca</button></div></div><div class="mt-3">@for(marca of marcas; track marca.idMarca){<span class="badge text-bg-light border me-2 mb-2">{{ marca.marcaDesc }}</span>}</div></div></div>
+
+@if(mensaje){<div class="toast-container position-fixed top-0 end-0 p-3"><div class="toast show border-0" [class.text-bg-success]="tipoMensaje==='success'" [class.text-bg-danger]="tipoMensaje==='danger'"><div class="d-flex"><div class="toast-body">{{ mensaje }}</div><button class="btn-close btn-close-white me-2 m-auto" (click)="mensaje='' "></button></div></div></div>}

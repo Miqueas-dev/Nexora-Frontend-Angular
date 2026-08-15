@@ -1,0 +1,79 @@
+:root {
+  --nexora-navy: #0f172a;
+  --nexora-navy-soft: #1e293b;
+  --nexora-accent: #0f766e;
+  --nexora-accent-dark: #115e59;
+  --nexora-bg: #f4f7fa;
+  --nexora-border: #e2e8f0;
+  --nexora-text: #1e293b;
+  --nexora-muted: #64748b;
+}
+
+body {
+  margin: 0;
+  background: var(--nexora-bg);
+  color: var(--nexora-text);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.btn-nexora {
+  background: var(--nexora-accent);
+  border-color: var(--nexora-accent);
+  color: #fff;
+}
+
+.btn-nexora:hover {
+  background: var(--nexora-accent-dark);
+  border-color: var(--nexora-accent-dark);
+  color: #fff;
+}
+
+.page-title {
+  font-weight: 700;
+  color: var(--nexora-navy);
+  margin-bottom: .25rem;
+}
+
+.page-subtitle {
+  color: var(--nexora-muted);
+  margin-bottom: 0;
+}
+
+.nexora-card {
+  border: 1px solid var(--nexora-border);
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, .06);
+}
+
+.table thead th {
+  background: var(--nexora-navy);
+  color: #fff;
+  font-weight: 600;
+  border-color: var(--nexora-navy);
+}
+
+.form-label {
+  font-weight: 600;
+  color: #334155;
+}
+
+.metric-card {
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 5px 18px rgba(15, 23, 42, .06);
+}
+
+.metric-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--nexora-navy);
+}
+
+.badge-role {
+  background: rgba(15, 118, 110, .14);
+  color: #0f766e;
+}
+
+.toast-container {
+  z-index: 2000;
+}
