@@ -1,10 +1,18 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  inject
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { getApiErrorMessage } from '../../core/services/error-message';
 import { ModalService } from '../../shared/modal/modal.service';
+
+import { finalize } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -15,6 +23,7 @@ import { ModalService } from '../../shared/modal/modal.service';
 })
 export class Login {
   private readonly fb = inject(FormBuilder);
+  private readonly cdr = inject(ChangeDetectorRef);
   enviando = false;
   mostrarClave = false;
   readonly form = this.fb.nonNullable.group({
@@ -31,25 +40,30 @@ export class Login {
   ingresar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
-      this.modal.warning('Revisa tus datos', 'Ingresa un correo válido y tu contraseña para continuar.');
+      this.modal.warning('Revisa tus datos', 'Ingresa tus credenciales para continuar.');
       return;
     }
     this.enviando = true;
-    this.auth.login(this.form.getRawValue()).subscribe({
-      next: usuario => {
-        this.enviando = false;
-        if (usuario.rol === 'CLIENTE') {
-          this.auth.logout().subscribe({ next: () => {}, error: () => this.auth.limpiarSesion() });
-          this.modal.error('Acceso Back Office', 'Las cuentas de Cliente deben ingresar desde el Portal Cliente.');
-          return;
+    this.auth.login(this.form.getRawValue())
+      .pipe(
+        finalize(() => {
+          this.enviando = false;
+          this.cdr.markForCheck();
+        })
+      )
+      .subscribe({
+        next: usuario => {
+          if (usuario.rol === 'CLIENTE') {
+            this.auth.logout().subscribe({ next: () => { }, error: () => this.auth.limpiarSesion() });
+            this.modal.error('No se pudo iniciar sesion', 'Verifica tu correo y contraseña e intentalo otra vez.');
+            return;
+          }
+          this.modal.success('Bienvenido al Back Office', `Hola ${usuario.nombre}. Tu espacio de trabajo está listo.`);
+          this.router.navigateByUrl(this.auth.rutaPrincipal(usuario.rol));
+        },
+        error: error => {
+          this.modal.error('No se pudo iniciar sesión', getApiErrorMessage(error, 'Correo o contraseña incorrectos.'));
         }
-        this.modal.success('Bienvenido al Back Office', `Hola ${usuario.nombre}. Tu espacio de trabajo está listo.`);
-        this.router.navigateByUrl(this.auth.rutaPrincipal(usuario.rol));
-      },
-      error: error => {
-        this.enviando = false;
-        this.modal.error('No se pudo iniciar sesión', getApiErrorMessage(error, 'Correo o contraseña incorrectos.'));
-      }
-    });
+      });
   }
 }

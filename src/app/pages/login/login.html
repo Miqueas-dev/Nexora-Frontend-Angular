@@ -40,12 +40,12 @@
           <div class="nx-form-group">
             <label for="correo">Correo electrónico</label>
             <div class="nx-input-wrap nx-login-input"><span><svg class="nx-icon"><use href="/icons.svg#mail"></use></svg></span><input id="correo" type="email" class="form-control" formControlName="correo" maxlength="45" autocomplete="username" placeholder="nombre@nexora.com"></div>
-            @if (form.controls.correo.touched && form.controls.correo.invalid) { <small class="nx-field-error"><svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> Ingresa un correo válido de hasta 45 caracteres.</small> }
+            @if (form.controls.correo.touched && form.controls.correo.invalid) { <small class="nx-field-error"><svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> Ingresa tu correo.</small> }
           </div>
           <div class="nx-form-group">
             <label for="clave">Contraseña</label>
             <div class="nx-input-wrap nx-login-input"><span><svg class="nx-icon"><use href="/icons.svg#lock"></use></svg></span><input id="clave" [type]="mostrarClave ? 'text' : 'password'" class="form-control" formControlName="clave" autocomplete="current-password" placeholder="Ingresa tu contraseña"><button type="button" class="nx-password-toggle" (click)="mostrarClave = !mostrarClave"><svg class="nx-icon"><use [attr.href]="mostrarClave ? '/icons.svg#eye-off' : '/icons.svg#eye'"></use></svg><span>{{ mostrarClave ? 'Ocultar' : 'Mostrar' }}</span></button></div>
-            @if (form.controls.clave.touched && form.controls.clave.invalid) { <small class="nx-field-error"><svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> La contraseña es obligatoria.</small> }
+            @if (form.controls.clave.touched && form.controls.clave.invalid) { <small class="nx-field-error"><svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> Ingresa tu contraseña.</small> }
           </div>
 
           <button type="submit" class="btn nx-btn-primary nx-login-submit" [disabled]="enviando">
