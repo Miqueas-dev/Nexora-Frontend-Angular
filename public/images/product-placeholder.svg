@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="620" viewBox="0 0 900 620">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#eef2ff"/><stop offset="1" stop-color="#e7edf7"/></linearGradient>
+    <linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#5269e5"/><stop offset="1" stop-color="#3147bd"/></linearGradient>
+  </defs>
+  <rect width="900" height="620" fill="url(#g)"/>
+  <circle cx="715" cy="120" r="150" fill="#dce4ff" opacity=".65"/>
+  <circle cx="150" cy="520" r="190" fill="#dce9f2" opacity=".7"/>
+  <rect x="235" y="140" width="430" height="275" rx="24" fill="#fff" stroke="#cbd5e1" stroke-width="9"/>
+  <rect x="265" y="170" width="370" height="215" rx="12" fill="#16223a"/>
+  <path d="M185 430h530l54 55c10 10 3 27-12 27H143c-15 0-22-17-12-27z" fill="#fff" stroke="#cbd5e1" stroke-width="9"/>
+  <rect x="380" y="449" width="140" height="13" rx="7" fill="#d7deea"/>
+  <rect x="390" y="230" width="120" height="82" rx="18" fill="url(#s)"/>
+  <path d="M417 253h66M417 273h45M417 293h54" stroke="#fff" stroke-width="9" stroke-linecap="round" opacity=".9"/>
+</svg>

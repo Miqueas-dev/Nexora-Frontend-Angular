@@ -1,0 +1,29 @@
+<section class="nx-page-head">
+  <div><span class="nx-eyebrow">Configuración</span><h1>Catálogos</h1><p>Administra las listas maestras que organizan productos, usuarios y disponibilidad en Nexora.</p></div>
+  <button type="button" class="btn nx-btn-primary" (click)="abrirNuevo()"><svg class="nx-icon"><use href="/icons.svg#plus"></use></svg> Nuevo registro</button>
+</section>
+
+<div class="nx-tabs nx-catalog-tabs">
+  <button type="button" [class.active]="tab === 'marcas'" (click)="cambiarTab('marcas')"><svg class="nx-icon"><use href="/icons.svg#inventory"></use></svg> Marcas</button>
+  <button type="button" [class.active]="tab === 'estados'" (click)="cambiarTab('estados')"><svg class="nx-icon"><use href="/icons.svg#check-circle"></use></svg> Estados</button>
+  <button type="button" [class.active]="tab === 'tipos'" (click)="cambiarTab('tipos')"><svg class="nx-icon"><use href="/icons.svg#users"></use></svg> Tipos de usuario</button>
+</div>
+
+<div class="nx-panel nx-table-panel nx-catalog-table-panel">
+  <div class="nx-table-section-head"><div><span class="nx-eyebrow">Catálogo activo</span><h2>{{ nombreTab() }}</h2><p>Registros maestros disponibles para los módulos de Nexora.</p></div><span class="nx-count-pill">{{ filas.length }} registros</span></div>
+  @if(cargando){<div class="nx-loading-card plain"><span class="spinner-border spinner-border-sm"></span><span>Cargando catálogo...</span></div>}
+  @else if(!filas.length){<div class="nx-empty-state"><span><svg class="nx-icon"><use href="/icons.svg#settings"></use></svg></span><h3>Catálogo vacío</h3><p>Registra el primer elemento para comenzar.</p></div>}
+  @else{
+    <div class="table-responsive"><table class="table nx-table nx-catalog-table align-middle"><thead><tr><th class="nx-col-id">ID</th><th>Descripción</th><th>Uso en Nexora</th><th class="nx-col-actions text-end">Acciones</th></tr></thead><tbody>
+      @for(fila of filasPagina; track fila.id){<tr><td><span class="nx-id-chip">#{{ fila.id }}</span></td><td><div class="nx-catalog-name"><span><svg class="nx-icon"><use [attr.href]="tab === 'marcas' ? '/icons.svg#inventory' : tab === 'estados' ? '/icons.svg#check-circle' : '/icons.svg#users'"></use></svg></span><strong>{{ fila.descripcion }}</strong></div></td><td><span class="nx-chip">{{ tab === 'marcas' ? 'Productos' : tab === 'estados' ? 'Usuarios / Productos' : 'Usuarios' }}</span></td><td class="text-end"><button type="button" class="nx-icon-btn" title="Editar registro" aria-label="Editar registro" (click)="editar(fila)"><svg class="nx-icon"><use href="/icons.svg#edit"></use></svg></button><button type="button" class="nx-icon-btn danger" title="Eliminar registro" aria-label="Eliminar registro" (click)="eliminar(fila)"><svg class="nx-icon"><use href="/icons.svg#trash"></use></svg></button></td></tr>}
+    </tbody></table></div>
+  }
+  <app-pagination [totalItems]="filas.length" [pageSize]="pageSize" [page]="page" (pageChange)="page = $event"></app-pagination>
+</div>
+
+@if(formularioVisible){
+  <div class="nx-dialog-backdrop"><section class="nx-dialog nx-dialog-sm" nxModalKeyboard [nxModalSubmitEnabled]="form.valid && !guardando" (nxModalClose)="cerrar()" (nxModalSubmit)="guardar()" (click)="$event.stopPropagation()">
+    <div class="nx-dialog-head"><div><span class="nx-eyebrow">{{ nombreTab() }}</span><h2>{{ editandoId ? 'Editar registro' : 'Nuevo registro' }}</h2><p>La información será reutilizada en los módulos relacionados.</p></div><button type="button" class="nx-dialog-close" aria-label="Cerrar" (click)="cerrar()"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg></button></div>
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate><div class="nx-form-group"><label>Descripción *</label><input class="form-control" formControlName="descripcion" [attr.maxlength]="maxLength()" placeholder="Ingresa la descripción">@if(form.controls.descripcion.touched && form.controls.descripcion.invalid){<small class="nx-field-error">Campo obligatorio. Máximo {{ maxLength() }} caracteres.</small>}</div><div class="nx-dialog-actions"><button type="button" class="btn nx-btn-ghost" (click)="cerrar()"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg> Cancelar</button><button type="submit" class="btn nx-btn-primary" [disabled]="guardando || form.invalid">@if(guardando){<span class="spinner-border spinner-border-sm"></span> Guardando...}@else{<svg class="nx-icon"><use href="/icons.svg#check"></use></svg> Guardar}</button></div></form>
+  </section></div>
+}

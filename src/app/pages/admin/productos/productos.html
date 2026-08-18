@@ -1,0 +1,42 @@
+<section class="nx-page-head">
+  <div><span class="nx-eyebrow">Inventario</span><h1>Productos</h1><p>Controla descripción, stock, precio, marca y disponibilidad del catálogo Nexora.</p></div>
+  <button type="button" class="btn nx-btn-primary" (click)="abrirNuevo()"><svg class="nx-icon"><use href="/icons.svg#plus"></use></svg> Nuevo producto</button>
+</section>
+
+<div class="nx-toolbar">
+  <div class="nx-search"><span><svg class="nx-icon"><use href="/icons.svg#search"></use></svg></span><input #buscar type="search" class="form-control" placeholder="Buscar producto, marca o estado..." [value]="filtro" (input)="cambiarFiltro(buscar.value)"></div>
+  <span class="nx-count-pill">{{ productosFiltrados.length }} productos</span>
+</div>
+
+<div class="nx-panel nx-table-panel">
+  @if (cargando) { <div class="nx-loading-card plain"><span class="spinner-border spinner-border-sm"></span><span>Cargando inventario...</span></div> }
+  @else if (!productosFiltrados.length) { <div class="nx-empty-state"><span><svg class="nx-icon"><use href="/icons.svg#package"></use></svg></span><h3>Sin productos para mostrar</h3><p>Ajusta la búsqueda o registra un nuevo producto.</p></div> }
+  @else {
+    <div class="table-responsive"><table class="table nx-table align-middle"><thead><tr><th>Producto</th><th>Marca</th><th>Stock</th><th>Precio</th><th>Estado</th><th class="text-end">Acciones</th></tr></thead>
+      <tbody>@for (producto of productosPagina; track producto.idProducto) {
+        <tr><td><div class="nx-product-cell nx-product-cell-photo"><span class="nx-product-thumb"><img [src]="imagenProducto(producto)" [alt]="producto.descripProducto" loading="lazy" (error)="imagenFallback($event)"></span><div><strong>{{ producto.descripProducto }}</strong><small>ID {{ producto.idProducto }}</small></div></div></td><td>{{ producto.marca.marcaDesc }}</td><td><span class="nx-stock-badge" [class]="'nx-stock-badge ' + stockClass(producto.stockProducto)">{{ producto.stockProducto }} unid.</span></td><td><strong>S/ {{ producto.precioProducto | number:'1.2-2' }}</strong></td><td><span class="nx-status" [class.active]="producto.estado.descripcion.toLowerCase() === 'activo'"><i></i>{{ producto.estado.descripcion }}</span></td><td class="text-end"><button type="button" class="nx-icon-btn" title="Editar producto" aria-label="Editar producto" (click)="editar(producto)"><svg class="nx-icon"><use href="/icons.svg#edit"></use></svg></button><button type="button" class="nx-icon-btn danger" title="Eliminar producto" aria-label="Eliminar producto" (click)="eliminar(producto)"><svg class="nx-icon"><use href="/icons.svg#trash"></use></svg></button></td></tr>
+      }</tbody>
+    </table></div>
+  }
+  <app-pagination [totalItems]="productosFiltrados.length" [pageSize]="pageSize" [page]="page" (pageChange)="page = $event"></app-pagination>
+</div>
+
+@if (formularioVisible) {
+  <div class="nx-dialog-backdrop"><section class="nx-dialog" nxModalKeyboard [nxModalSubmitEnabled]="form.valid && !guardando" (nxModalClose)="cerrarFormulario()" (nxModalSubmit)="guardar()" (click)="$event.stopPropagation()">
+    <div class="nx-dialog-head"><div><span class="nx-eyebrow">Inventario Nexora</span><h2>{{ editandoId ? 'Editar producto' : 'Registrar producto' }}</h2><p>Define sus datos comerciales y selecciona marca y estado desde los buscadores.</p></div><button type="button" class="nx-dialog-close" aria-label="Cerrar" (click)="cerrarFormulario()"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg></button></div>
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+      <div class="nx-form-grid">
+        <div class="nx-form-group nx-span-2"><label>Descripción *</label><input class="form-control" formControlName="descripProducto" maxlength="45" placeholder="Ej. Laptop Lenovo ThinkPad">@if(form.controls.descripProducto.touched && form.controls.descripProducto.invalid){<small class="nx-field-error">La descripción es obligatoria y admite hasta 45 caracteres.</small>}</div>
+        <div class="nx-form-group"><label>Stock *</label><input type="number" min="0" step="1" class="form-control" formControlName="stockProducto">@if(form.controls.stockProducto.touched && form.controls.stockProducto.invalid){<small class="nx-field-error">El stock debe ser un entero igual o mayor que 0.</small>}</div>
+        <div class="nx-form-group"><label>Precio *</label><div class="nx-money-input"><span>S/</span><input type="number" min="0.01" step="0.01" class="form-control" formControlName="precioProducto"></div>@if(form.controls.precioProducto.touched && form.controls.precioProducto.invalid){<small class="nx-field-error">El precio debe ser mayor que 0.</small>}</div>
+        <div class="nx-form-group"><label>Marca *</label><button type="button" class="nx-lookup-field" [class.invalid]="form.controls.idMarca.touched && form.controls.idMarca.invalid" (click)="abrirSelector('marca')"><span class="nx-lookup-field-icon"><svg class="nx-icon"><use href="/icons.svg#inventory"></use></svg></span><span><small>Marca comercial</small><strong>{{ marcaSeleccionada?.marcaDesc || 'Seleccionar marca' }}</strong></span><svg class="nx-icon nx-lookup-field-action"><use href="/icons.svg#search"></use></svg></button>@if(form.controls.idMarca.touched && form.controls.idMarca.invalid){<small class="nx-field-error">La marca es obligatoria.</small>}</div>
+        <div class="nx-form-group"><label>Estado *</label><button type="button" class="nx-lookup-field" [class.invalid]="form.controls.idEstado.touched && form.controls.idEstado.invalid" (click)="abrirSelector('estado')"><span class="nx-lookup-field-icon state"><svg class="nx-icon"><use href="/icons.svg#check-circle"></use></svg></span><span><small>Disponibilidad</small><strong>{{ estadoSeleccionado?.descripcion || 'Seleccionar estado' }}</strong></span><svg class="nx-icon nx-lookup-field-action"><use href="/icons.svg#search"></use></svg></button>@if(form.controls.idEstado.touched && form.controls.idEstado.invalid){<small class="nx-field-error">El estado es obligatorio.</small>}</div>
+      </div>
+      
+      <div class="nx-dialog-actions"><button type="button" class="btn nx-btn-ghost" (click)="cerrarFormulario()"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg> Cancelar</button><button type="submit" class="btn nx-btn-primary" [disabled]="guardando || form.invalid">@if(guardando){<span class="spinner-border spinner-border-sm"></span> Guardando...}@else{<svg class="nx-icon"><use href="/icons.svg#check"></use></svg> Guardar producto}</button></div>
+    </form>
+
+    <app-lookup-modal [visible]="selectorActivo === 'marca'" title="Seleccionar marca" description="Busca una marca del catálogo y selecciónala con un clic." searchPlaceholder="Buscar marca..." [items]="marcaItems" (selected)="seleccionarLookup($event)" (closed)="cerrarSelector()"></app-lookup-modal>
+    <app-lookup-modal [visible]="selectorActivo === 'estado'" title="Seleccionar estado" description="Busca el estado que deseas asignar al producto." searchPlaceholder="Buscar estado..." [items]="estadoItems" (selected)="seleccionarLookup($event)" (closed)="cerrarSelector()"></app-lookup-modal>
+  </section></div>
+}

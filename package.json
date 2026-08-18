@@ -6,7 +6,11 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "verify:source": "node scripts/validate-source.mjs",
+    "verify:ui": "node scripts/validate-ui-v4.mjs",
+    "verify:ui:v4": "node scripts/validate-ui-v4.mjs",
+    "verify:ui:v3": "node scripts/validate-ui-v3.mjs"
   },
   "private": true,
   "packageManager": "npm@11.6.2",

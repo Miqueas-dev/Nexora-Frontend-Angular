@@ -1,0 +1,59 @@
+@if (usuario$ | async; as usuario) {
+  <div class="nx-shell">
+    <aside class="nx-sidebar" [class.open]="sidebarOpen" [class.collapsed]="sidebarCollapsed">
+      <div class="nx-brand-block">
+        <a [routerLink]="authRoute(usuario.rol)" class="nx-brand" (click)="cerrarSidebar()">
+          <span class="nx-brand-mark">N</span>
+          <span><strong>Nexora</strong><small>Back Office</small></span>
+        </a>
+        <button type="button" class="nx-collapse-btn" aria-label="Colapsar menú" (click)="sidebarCollapsed = !sidebarCollapsed">
+          <svg class="nx-icon"><use [attr.href]="sidebarCollapsed ? '/icons.svg#chevron-right' : '/icons.svg#chevron-left'"></use></svg>
+        </button>
+        <button type="button" class="nx-sidebar-close" aria-label="Cerrar menú" (click)="cerrarSidebar()">
+          <svg class="nx-icon"><use href="/icons.svg#x"></use></svg>
+        </button>
+      </div>
+
+      <div class="nx-profile-card">
+        <span class="nx-avatar">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
+        <div class="nx-profile-identity"><strong>{{ usuario.nombre }}</strong><small>{{ usuario.correo }}</small><span class="nx-profile-role">{{ usuario.rol }}</span></div>
+      </div>
+
+      <nav class="nx-nav" aria-label="Navegación principal">
+        <span class="nx-nav-label">NAVEGACIÓN</span>
+        @for (item of itemsPara(usuario.rol); track item.route) {
+          <a [routerLink]="item.route" routerLinkActive="active" (click)="cerrarSidebar()">
+            <span class="nx-nav-icon"><svg class="nx-icon"><use [attr.href]="'/icons.svg#' + item.icon"></use></svg></span>
+            <span>{{ item.label }}</span>
+          </a>
+        }
+      </nav>
+
+      <div class="nx-sidebar-footer">
+        <div class="nx-system-state"><span></span><div><strong>Conectado</strong><small>Sistema disponible</small></div></div>
+        <button type="button" class="nx-logout" (click)="cerrarSesion()">
+          <svg class="nx-icon"><use href="/icons.svg#logout"></use></svg><span>Cerrar sesión</span>
+        </button>
+      </div>
+    </aside>
+
+    @if (sidebarOpen) { <div class="nx-sidebar-overlay" (click)="cerrarSidebar()"></div> }
+
+    <main class="nx-main" [class.sidebar-collapsed]="sidebarCollapsed">
+      <header class="nx-topbar">
+        <div class="nx-topbar-left">
+          <button type="button" class="nx-menu-toggle" aria-label="Abrir menú" (click)="sidebarOpen = true">
+            <svg class="nx-icon"><use href="/icons.svg#menu"></use></svg>
+          </button>
+          <div class="nx-topbar-copy"><span>Centro de operaciones</span><small>Nexora · Back Office</small></div>
+        </div>
+        <div class="nx-topbar-account">
+          <span class="nx-topbar-avatar">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
+          <div><strong>{{ usuario.nombre }}</strong><small>{{ usuario.correo }}</small></div>
+          <span class="nx-role-pill">{{ usuario.rol }}</span>
+        </div>
+      </header>
+      <div class="nx-page"><router-outlet></router-outlet></div>
+    </main>
+  </div>
+}

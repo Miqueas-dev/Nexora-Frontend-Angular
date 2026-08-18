@@ -1,70 +1,55 @@
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
-import { LoginRequest } from '../../models/login-request';
-import { LoginResponse } from '../../models/login-response';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
+import { getApiErrorMessage } from '../../core/services/error-message';
+import { ModalService } from '../../shared/modal/modal.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './login.html',
-  styleUrl: './login.css'
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Login {
-  correo: string = '';
-  clave: string = '';
-  cargando: boolean = false;
-  mensaje: string = '';
+  private readonly fb = inject(FormBuilder);
+  enviando = false;
+  mostrarClave = false;
+  readonly form = this.fb.nonNullable.group({
+    correo: ['', [Validators.required, Validators.email, Validators.maxLength(45)]],
+    clave: ['', [Validators.required]]
+  });
 
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) { }
-
-  ingresar(): void {
-    if (!this.correo || !this.clave) {
-      this.mostrarError('Ingrese correo y contraseña.');
-      return;
-    }
-
-    const request: LoginRequest = {
-      correo: this.correo,
-      clave: this.clave
-    };
-
-    this.cargando = true;
-
-    this.authService.login(request).subscribe({
-      next: (usuario) => {
-        this.cargando = false;
-        this.authService.usuarioActual = usuario;
-        this.irAlInicio(usuario);
-      },
-      error: (error: HttpErrorResponse) => {
-        this.cargando = false;
-        this.mostrarError(typeof error.error === 'string' ? error.error : 'No se pudo iniciar sesión.');
-      }
+  constructor(private auth: AuthService, private router: Router, private modal: ModalService) {
+    this.auth.cargarSesion().subscribe(usuario => {
+      if (usuario) this.router.navigateByUrl(this.auth.rutaPrincipal(usuario.rol));
     });
   }
 
-  private irAlInicio(usuario: LoginResponse): void {
-    if (usuario.rol === 'ADMIN') {
-      this.router.navigate(['/admin']);
-    } else if (usuario.rol === 'VENDEDOR') {
-      this.router.navigate(['/vendedor']);
-    } else if (usuario.rol === 'CLIENTE') {
-      this.router.navigate(['/cliente']);
-    } else {
-      this.mostrarError('El usuario no tiene un rol válido.');
+  ingresar(): void {
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      this.modal.warning('Revisa tus datos', 'Ingresa un correo válido y tu contraseña para continuar.');
+      return;
     }
-  }
-
-  mostrarError(texto: string): void {
-    this.mensaje = texto;
-    setTimeout(() => this.mensaje = '', 4000);
+    this.enviando = true;
+    this.auth.login(this.form.getRawValue()).subscribe({
+      next: usuario => {
+        this.enviando = false;
+        if (usuario.rol === 'CLIENTE') {
+          this.auth.logout().subscribe({ next: () => {}, error: () => this.auth.limpiarSesion() });
+          this.modal.error('Acceso Back Office', 'Las cuentas de Cliente deben ingresar desde el Portal Cliente.');
+          return;
+        }
+        this.modal.success('Bienvenido al Back Office', `Hola ${usuario.nombre}. Tu espacio de trabajo está listo.`);
+        this.router.navigateByUrl(this.auth.rutaPrincipal(usuario.rol));
+      },
+      error: error => {
+        this.enviando = false;
+        this.modal.error('No se pudo iniciar sesión', getApiErrorMessage(error, 'Correo o contraseña incorrectos.'));
+      }
+    });
   }
 }

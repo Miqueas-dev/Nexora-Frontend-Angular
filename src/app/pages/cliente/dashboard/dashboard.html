@@ -1,0 +1,23 @@
+@if(usuario$|async;as usuario){
+<section class="nx-client-welcome">
+  <div><span class="nx-eyebrow">Mi espacio Nexora</span><h1>Hola, {{usuario.nombre}}.</h1><p>Consulta el catálogo y encuentra rápidamente tus compras más recientes.</p></div>
+  <a routerLink="/cliente/productos" class="btn nx-btn-primary"><svg class="nx-icon"><use href="/icons.svg#package"></use></svg> Explorar productos</a>
+</section>
+}
+@if(cargando){<div class="nx-loading-card"><span class="spinner-border"></span><div><strong>Preparando tu portal</strong><small>Consultando productos y compras...</small></div></div>}@else{
+<div class="nx-client-overview-grid">
+  <article class="nx-client-overview-card"><span><svg class="nx-icon"><use href="/icons.svg#package"></use></svg></span><div><small>Catálogo disponible</small><strong>{{disponibles}} productos</strong><p>Productos activos con stock para consultar.</p></div><a routerLink="/cliente/productos">Ver catálogo <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg></a></article>
+  <article class="nx-client-overview-card"><span><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg></span><div><small>Mis compras</small><strong>{{compras.length}} comprobante(s)</strong><p>@if(ultimaCompra){Última compra: #{{ultimaCompra.numComprobante}} · {{ultimaCompra.fechaComprobante|date:'dd/MM/yyyy'}}}@else{Aún no hay compras registradas.}</p></div><a routerLink="/cliente/mis-compras">Ver historial <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg></a></article>
+</div>
+
+<div class="nx-client-home-grid">
+  <article class="nx-client-content-card">
+    <div class="nx-panel-head"><div><span class="nx-eyebrow">Recomendado para consultar</span><h2>Productos disponibles</h2></div><a routerLink="/cliente/productos" class="nx-link-action">Ver todos <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg></a></div>
+    @if(destacados.length){<div class="nx-client-product-list">@for(producto of destacados;track producto.idProducto){<div class="nx-client-product-row"><span class="nx-client-product-thumb"><img [src]="imagenProducto(producto)" [alt]="producto.descripProducto" (error)="imagenFallback($event)"></span><div><strong>{{producto.descripProducto}}</strong><small>{{producto.marca.marcaDesc}} · {{producto.stockProducto}} unid.</small></div><b>S/ {{producto.precioProducto|number:'1.2-2'}}</b></div>}</div>}@else{<div class="nx-empty-mini">No hay productos disponibles en este momento.</div>}
+  </article>
+  <article class="nx-client-content-card">
+    <div class="nx-panel-head"><div><span class="nx-eyebrow">Actividad reciente</span><h2>Últimas compras</h2></div><a routerLink="/cliente/mis-compras" class="nx-link-action">Ver historial <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg></a></div>
+    @if(recientes.length){<div class="nx-activity-list">@for(compra of recientes;track compra.numComprobante){<div class="nx-activity-row"><span class="nx-activity-icon"><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg></span><div><strong>Comprobante #{{compra.numComprobante}}</strong><small>{{compra.detalles.length}} producto(s) · {{compra.fechaComprobante|date:'dd MMM yyyy'}}</small></div><b>S/ {{compra.total|number:'1.2-2'}}</b></div>}</div>}@else{<div class="nx-empty-mini">Cuando un vendedor registre una compra a tu nombre, aparecerá aquí.</div>}
+  </article>
+</div>
+}
