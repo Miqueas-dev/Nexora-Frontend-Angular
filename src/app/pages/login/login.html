@@ -1,41 +1,63 @@
-<div class="login-page">
-  <div class="login-card">
-    <div class="login-brand">
-      <div class="login-mark">N</div>
-      <div>
-        <h1>Nexora</h1>
-        <p>Back Office</p>
+<div class="nx-login-page">
+  <div class="nx-login-orb nx-login-orb-a"></div><div class="nx-login-orb nx-login-orb-b"></div>
+  <main class="nx-login-shell">
+    <section class="nx-login-brand-panel">
+      <a routerLink="/" class="nx-public-brand inverse"><span class="nx-brand-mark">N</span><span><strong>Nexora</strong><small>Back Office</small></span></a>
+
+      <div class="nx-login-brand-copy">
+        <span class="nx-login-chip"><svg class="nx-icon"><use href="/icons.svg#shield"></use></svg> Acceso interno Nexora</span>
+        <h1>Controla tu operación<br><span>desde un solo lugar.</span></h1>
+        <p>Espacio exclusivo para el personal interno responsable de administración y ventas.</p>
+
+        <div class="nx-login-metrics">
+          <article><span><svg class="nx-icon"><use href="/icons.svg#inventory"></use></svg></span><div><strong>Inventario</strong><small>Stock y catálogo centralizado</small></div></article>
+          <article><span><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg></span><div><strong>Ventas</strong><small>Operaciones trazables</small></div></article>
+          <article><span><svg class="nx-icon"><use href="/icons.svg#users"></use></svg></span><div><strong>Equipo</strong><small>Administrador y vendedor</small></div></article>
+        </div>
       </div>
-    </div>
 
-    <div class="mb-4">
-      <h2>Iniciar sesión</h2>
-      <p class="text-muted mb-0">Ingrese sus credenciales para acceder al sistema.</p>
-    </div>
+      <div class="nx-login-security">
+        <span><svg class="nx-icon"><use href="/icons.svg#shield"></use></svg></span>
+        <div><strong>Sesión protegida por Nexora</strong><small>Las credenciales y permisos son validados directamente por el servidor.</small></div>
+        <i>Seguro</i>
+      </div>
+      <small class="nx-login-foot">Nexora · Gestión comercial 2026</small>
+    </section>
 
-    <div class="mb-3">
-      <label class="form-label">Correo</label>
-      <input class="form-control form-control-lg" type="email" [(ngModel)]="correo" placeholder="usuario@nexora.com">
-    </div>
+    <section class="nx-login-form-panel">
+      <div class="nx-login-form-wrap">
+        <header class="nx-login-form-head">
+          <div class="nx-login-form-icon"><svg class="nx-icon"><use href="/icons.svg#lock"></use></svg></div>
+          <div><span class="nx-eyebrow">Acceso interno</span><h2>Inicia sesión</h2><p>Ingresa con tu cuenta de Administrador o Vendedor.</p></div>
+        </header>
 
-    <div class="mb-4">
-      <label class="form-label">Contraseña</label>
-      <input class="form-control form-control-lg" type="password" [(ngModel)]="clave" (keyup.enter)="ingresar()">
-    </div>
+        <div class="nx-login-role-strip">
+          <span><svg class="nx-icon"><use href="/icons.svg#settings"></use></svg> Administrador</span>
+          <span><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg> Vendedor</span>
+        </div>
 
-    <button class="btn btn-nexora btn-lg w-100" type="button" (click)="ingresar()" [disabled]="cargando">
-      @if (cargando) { Ingresando... } @else { Ingresar }
-    </button>
-  </div>
+        <form [formGroup]="form" (ngSubmit)="ingresar()" novalidate class="nx-login-form">
+          <div class="nx-form-group">
+            <label for="correo">Correo electrónico</label>
+            <div class="nx-input-wrap nx-login-input"><span><svg class="nx-icon"><use href="/icons.svg#mail"></use></svg></span><input id="correo" type="email" class="form-control" formControlName="correo" maxlength="45" autocomplete="username" placeholder="nombre@nexora.com"></div>
+            @if (form.controls.correo.touched && form.controls.correo.invalid) { <small class="nx-field-error"><svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> Ingresa un correo válido de hasta 45 caracteres.</small> }
+          </div>
+          <div class="nx-form-group">
+            <label for="clave">Contraseña</label>
+            <div class="nx-input-wrap nx-login-input"><span><svg class="nx-icon"><use href="/icons.svg#lock"></use></svg></span><input id="clave" [type]="mostrarClave ? 'text' : 'password'" class="form-control" formControlName="clave" autocomplete="current-password" placeholder="Ingresa tu contraseña"><button type="button" class="nx-password-toggle" (click)="mostrarClave = !mostrarClave"><svg class="nx-icon"><use [attr.href]="mostrarClave ? '/icons.svg#eye-off' : '/icons.svg#eye'"></use></svg><span>{{ mostrarClave ? 'Ocultar' : 'Mostrar' }}</span></button></div>
+            @if (form.controls.clave.touched && form.controls.clave.invalid) { <small class="nx-field-error"><svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> La contraseña es obligatoria.</small> }
+          </div>
+
+          <button type="submit" class="btn nx-btn-primary nx-login-submit" [disabled]="enviando">
+            @if (enviando) { <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Validando acceso... }
+            @else { <svg class="nx-icon"><use href="/icons.svg#lock"></use></svg> Ingresar al Back Office <svg class="nx-icon nx-icon-end"><use href="/icons.svg#arrow-right"></use></svg> }
+          </button>
+          <a routerLink="/" class="btn nx-btn-secondary nx-login-return"><svg class="nx-icon"><use href="/icons.svg#arrow-left"></use></svg> Regresar</a>
+        </form>
+
+        <div class="nx-login-note"><span><svg class="nx-icon"><use href="/icons.svg#info"></use></svg></span><div><strong>Acceso inteligente por rol</strong><p>Nexora valida tu rol y habilita únicamente las funciones internas autorizadas.</p></div></div>
+        <div class="nx-login-trust"><span><svg class="nx-icon"><use href="/icons.svg#check-circle"></use></svg> Validación frontend</span><span><svg class="nx-icon"><use href="/icons.svg#shield"></use></svg> Validación backend</span></div>
+      </div>
+    </section>
+  </main>
 </div>
-
-@if (mensaje) {
-  <div class="toast-container position-fixed top-0 end-0 p-3">
-    <div class="toast show text-bg-danger border-0" role="alert">
-      <div class="d-flex">
-        <div class="toast-body">{{ mensaje }}</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" (click)="mensaje = ''"></button>
-      </div>
-    </div>
-  </div>
-}

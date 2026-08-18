@@ -1,0 +1,9 @@
+@if (totalItems > pageSize) {
+  <nav class="nx-pagination" aria-label="Paginación">
+    <button type="button" aria-label="Página anterior" [disabled]="page <= 1" (click)="go(page - 1)"><svg class="nx-icon"><use href="/icons.svg#chevron-left"></use></svg></button>
+    @for (item of pages; track item) {
+      <button type="button" [class.active]="item === page" (click)="go(item)">{{ item }}</button>
+    }
+    <button type="button" aria-label="Página siguiente" [disabled]="page >= totalPages" (click)="go(page + 1)"><svg class="nx-icon"><use href="/icons.svg#chevron-right"></use></svg></button>
+  </nav>
+}

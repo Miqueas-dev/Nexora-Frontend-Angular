@@ -1,0 +1,41 @@
+<section class="nx-page-head">
+  <div><span class="nx-eyebrow">Administración</span><h1>Visión general</h1><p>Estado actual de la operación comercial y los principales recursos de Nexora.</p></div>
+  <a routerLink="/app/admin/productos" class="btn nx-btn-secondary"><svg class="nx-icon"><use href="/icons.svg#package"></use></svg> Gestionar productos</a>
+</section>
+
+@if (cargando) {
+  <div class="nx-loading-card"><span class="spinner-border"></span><div><strong>Preparando el resumen</strong><small>Consultando información de Nexora...</small></div></div>
+} @else {
+  <div class="nx-kpi-grid">
+    <article class="nx-kpi-card"><div class="nx-kpi-icon violet"><svg class="nx-icon"><use href="/icons.svg#users"></use></svg></div><div><small>Usuarios registrados</small><strong>{{ usuarios.length }}</strong><span>{{ clientes }} clientes</span></div><i class="nx-kpi-accent"></i></article>
+    <article class="nx-kpi-card"><div class="nx-kpi-icon cyan"><svg class="nx-icon"><use href="/icons.svg#package"></use></svg></div><div><small>Productos</small><strong>{{ productos.length }}</strong><span>{{ productosActivos }} activos</span></div><i class="nx-kpi-accent"></i></article>
+    <article class="nx-kpi-card"><div class="nx-kpi-icon green"><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg></div><div><small>Comprobantes</small><strong>{{ ventas.length }}</strong><span>Ventas registradas</span></div><i class="nx-kpi-accent"></i></article>
+    <article class="nx-kpi-card"><div class="nx-kpi-icon amber"><svg class="nx-icon"><use href="/icons.svg#money"></use></svg></div><div><small>Valor vendido</small><strong>S/ {{ totalVentas | number:'1.2-2' }}</strong><span>{{ marcas }} marcas disponibles</span></div><i class="nx-kpi-accent"></i></article>
+  </div>
+
+  <div class="nx-dashboard-grid">
+    <article class="nx-panel nx-panel-elevated">
+      <div class="nx-panel-head"><div><span class="nx-eyebrow">Inventario</span><h2>Productos con menor stock</h2></div><a routerLink="/app/admin/productos" class="nx-link-action">Ver inventario <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg></a></div>
+      @if (stockBajo.length) {
+        <div class="nx-stock-list">
+          @for (producto of stockBajo; track producto.idProducto) {
+            <div class="nx-stock-row"><div class="nx-stock-symbol"><svg class="nx-icon"><use href="/icons.svg#package"></use></svg></div><div class="nx-stock-meta"><strong>{{ producto.descripProducto }}</strong><small>{{ producto.marca.marcaDesc }}</small></div><div class="nx-stock-meter"><div><span [style.width.%]="stockPorcentaje(producto)"></span></div><small>{{ producto.stockProducto }} unidades</small></div></div>
+          }
+        </div>
+      } @else { <div class="nx-empty-mini">No hay productos para mostrar.</div> }
+    </article>
+
+    <article class="nx-panel nx-panel-elevated">
+      <div class="nx-panel-head"><div><span class="nx-eyebrow">Actividad</span><h2>Últimas ventas</h2></div><a routerLink="/app/admin/ventas" class="nx-link-action">Ver todas <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg></a></div>
+      @if (ventasRecientes.length) {
+        <div class="nx-activity-list">
+          @for (venta of ventasRecientes; track venta.numComprobante) {
+            <div class="nx-activity-row"><span class="nx-activity-icon"><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg></span><div><strong>{{ venta.usuario.nombreUsuario }} {{ venta.usuario.apepatUsuario }}</strong><small>#{{ venta.numComprobante }} · {{ venta.fechaComprobante | date:'dd MMM yyyy' }} · {{ venta.vendedor?.nombreUsuario || 'Sin vendedor' }}</small></div><b>S/ {{ venta.total | number:'1.2-2' }}</b></div>
+          }
+        </div>
+      } @else { <div class="nx-empty-mini">Todavía no se registran ventas.</div> }
+    </article>
+  </div>
+
+  <div class="nx-quick-actions"><div><span class="nx-eyebrow">Accesos rápidos</span><h2>Continúa administrando Nexora</h2><p>Accede directamente a las áreas principales del sistema.</p></div><div class="nx-action-links"><a routerLink="/app/admin/usuarios"><span><svg class="nx-icon"><use href="/icons.svg#users"></use></svg></span><div><strong>Usuarios</strong><small>Perfiles y accesos</small></div><svg class="nx-icon nx-action-arrow"><use href="/icons.svg#chevron-right"></use></svg></a><a routerLink="/app/admin/productos"><span><svg class="nx-icon"><use href="/icons.svg#package"></use></svg></span><div><strong>Productos</strong><small>Stock y precios</small></div><svg class="nx-icon nx-action-arrow"><use href="/icons.svg#chevron-right"></use></svg></a><a routerLink="/app/admin/catalogos"><span><svg class="nx-icon"><use href="/icons.svg#settings"></use></svg></span><div><strong>Catálogos</strong><small>Marcas y estados</small></div><svg class="nx-icon nx-action-arrow"><use href="/icons.svg#chevron-right"></use></svg></a><a routerLink="/app/admin/ventas"><span><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg></span><div><strong>Ventas</strong><small>Comprobantes</small></div><svg class="nx-icon nx-action-arrow"><use href="/icons.svg#chevron-right"></use></svg></a></div></div>
+}

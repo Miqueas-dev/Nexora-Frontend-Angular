@@ -1,0 +1,11 @@
+<section class="nx-client-page-intro"><div><span class="nx-eyebrow">Catálogo Nexora</span><h1>Productos</h1><p>Consulta precios, marcas y disponibilidad actual de los productos registrados.</p></div></section>
+<div class="nx-catalog-toolbar"><div class="nx-search"><span><svg class="nx-icon"><use href="/icons.svg#search"></use></svg></span><input #buscar type="search" class="form-control" placeholder="Buscar por producto o marca..." [value]="filtro" (input)="cambiarFiltro(buscar.value)"></div><label class="nx-switch"><input type="checkbox" [checked]="soloDisponibles" (change)="cambiarDisponibilidad()"><span></span>Solo disponibles</label></div>
+@if(cargando){<div class="nx-loading-card"><span class="spinner-border"></span><div><strong>Cargando catálogo</strong><small>Consultando productos disponibles...</small></div></div>}@else if(!filtrados.length){<div class="nx-panel nx-empty-state"><span><svg class="nx-icon"><use href="/icons.svg#package"></use></svg></span><h3>No encontramos productos</h3><p>Prueba otra búsqueda o cambia el filtro de disponibilidad.</p></div>}@else{
+<div class="nx-product-grid">@for(producto of productosPagina;track producto.idProducto){
+  <article class="nx-product-card">
+    <div class="nx-product-photo"><img [src]="imagenProducto(producto)" [alt]="producto.descripProducto" loading="lazy" (error)="imagenFallback($event)"><span class="nx-product-photo-brand">{{ producto.marca.marcaDesc }}</span><i [class.inactive]="producto.estado.descripcion.toLowerCase()!=='activo'"></i></div>
+    <div class="nx-product-card-body"><small>{{ producto.marca.marcaDesc }}</small><h3>{{ producto.descripProducto }}</h3><div class="nx-product-card-meta"><span [class.low]="producto.stockProducto<=5">{{ stockTexto(producto) }}</span><b>{{ producto.stockProducto }} unid.</b></div><strong class="nx-product-price">S/ {{ producto.precioProducto | number:'1.2-2' }}</strong><p>Producto disponible en el catálogo comercial de Nexora.</p></div>
+  </article>
+}</div>
+<app-pagination [totalItems]="filtrados.length" [pageSize]="pageSize" [page]="page" (pageChange)="page = $event"></app-pagination>
+}

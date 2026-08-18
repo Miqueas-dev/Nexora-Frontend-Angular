@@ -1,0 +1,30 @@
+@if (state$ | async; as state) {
+  @if (state.visible) {
+    <div class="nx-modal-backdrop" role="presentation">
+      <section class="nx-modal-card" role="dialog" aria-modal="true" [attr.aria-label]="state.title" (click)="$event.stopPropagation()">
+        <div class="nx-modal-accent" [class]="'nx-modal-accent ' + state.type"></div>
+        <header class="nx-modal-header">
+          <div class="nx-modal-icon" [class]="'nx-modal-icon ' + state.type">
+            @if (state.type === 'success') { <svg class="nx-icon"><use href="/icons.svg#check-circle"></use></svg> }
+            @else if (state.type === 'error') { <svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> }
+            @else if (state.type === 'warning') { <svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> }
+            @else if (state.type === 'confirm') { <svg class="nx-icon"><use href="/icons.svg#help-circle"></use></svg> }
+            @else { <svg class="nx-icon"><use href="/icons.svg#info"></use></svg> }
+          </div>
+          <div class="nx-modal-copy">
+            <span class="nx-eyebrow">Nexora · Centro de notificaciones</span>
+            <h3>{{ state.title }}</h3>
+            <p>{{ state.message }}</p>
+          </div>
+          <button type="button" class="nx-dialog-close nx-modal-close" aria-label="Cerrar modal" (click)="modal.close(false)"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg></button>
+        </header>
+        <div class="nx-modal-actions">
+          @if (state.showCancel) {
+            <button type="button" class="btn nx-btn-ghost" (click)="modal.close(false)"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg>{{ state.cancelText }}</button>
+          }
+          <button type="button" class="btn nx-btn-primary" (click)="modal.close(true)"><svg class="nx-icon"><use href="/icons.svg#check"></use></svg>{{ state.confirmText }}</button>
+        </div>
+      </section>
+    </div>
+  }
+}

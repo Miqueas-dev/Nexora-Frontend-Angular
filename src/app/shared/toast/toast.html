@@ -1,0 +1,14 @@
+<div class="nx-toast-stack" aria-live="polite" aria-atomic="true">
+  @for (item of (toasts$ | async); track item.id) {
+    <article class="nx-toast" [class]="'nx-toast ' + item.type" role="status">
+      <span class="nx-toast-icon">
+        @if (item.type === 'success') { <svg class="nx-icon"><use href="/icons.svg#check-circle"></use></svg> }
+        @else if (item.type === 'error') { <svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> }
+        @else if (item.type === 'warning') { <svg class="nx-icon"><use href="/icons.svg#alert-circle"></use></svg> }
+        @else { <svg class="nx-icon"><use href="/icons.svg#info"></use></svg> }
+      </span>
+      <div class="nx-toast-copy"><strong>{{ item.title }}</strong><span>{{ item.message }}</span></div>
+      <button type="button" aria-label="Cerrar notificación" (click)="toast.remove(item.id)"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg></button>
+    </article>
+  }
+</div>

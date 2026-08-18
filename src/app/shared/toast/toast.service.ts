@@ -1,0 +1,33 @@
+import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+export interface ToastMessage {
+  id: number;
+  type: ToastType;
+  title: string;
+  message: string;
+}
+
+@Injectable({ providedIn: 'root' })
+export class ToastService {
+  private readonly subject = new BehaviorSubject<ToastMessage[]>([]);
+  readonly toasts$ = this.subject.asObservable();
+  private sequence = 0;
+
+  show(type: ToastType, title: string, message: string): void {
+    const toast: ToastMessage = { id: ++this.sequence, type, title, message };
+    this.subject.next([...this.subject.value, toast]);
+    window.setTimeout(() => this.remove(toast.id), 4200);
+  }
+
+  success(title: string, message: string): void { this.show('success', title, message); }
+  error(title: string, message: string): void { this.show('error', title, message); }
+  warning(title: string, message: string): void { this.show('warning', title, message); }
+  info(title: string, message: string): void { this.show('info', title, message); }
+
+  remove(id: number): void {
+    this.subject.next(this.subject.value.filter(item => item.id !== id));
+  }
+}

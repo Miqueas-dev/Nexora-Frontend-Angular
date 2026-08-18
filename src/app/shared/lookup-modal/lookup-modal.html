@@ -1,0 +1,36 @@
+@if (visible) {
+  <div class="nx-lookup-backdrop" role="presentation">
+    <section class="nx-lookup-card" role="dialog" aria-modal="true" [attr.aria-label]="title" (click)="$event.stopPropagation()">
+      <header class="nx-lookup-head">
+        <div class="nx-lookup-title">
+          <span class="nx-lookup-title-icon"><svg class="nx-icon"><use href="/icons.svg#search"></use></svg></span>
+          <div><span class="nx-eyebrow">Selector Nexora</span><h2>{{ title }}</h2><p>{{ description }}</p></div>
+        </div>
+        <button type="button" class="nx-dialog-close" aria-label="Cerrar selector" (click)="close()"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg></button>
+      </header>
+
+      <div class="nx-lookup-search">
+        <span><svg class="nx-icon"><use href="/icons.svg#search"></use></svg></span>
+        <input #lookupSearch type="search" class="form-control" [placeholder]="searchPlaceholder" [value]="query" (input)="updateQuery(lookupSearch.value)" autocomplete="off">
+        @if (query) { <button type="button" aria-label="Limpiar búsqueda" (click)="updateQuery(''); lookupSearch.value = ''"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg></button> }
+      </div>
+
+      <div class="nx-lookup-summary"><span>{{ filteredItems.length }} resultado(s)</span><small>@if(filteredItems.length){Mostrando {{ rangeStart }}–{{ rangeEnd }} de {{ filteredItems.length }}} @else {Sin registros para mostrar}</small></div>
+
+      <div class="nx-lookup-list">
+        @for (item of pagedItems; track item.id) {
+          <button type="button" class="nx-lookup-row" (click)="select(item)">
+            <span class="nx-lookup-row-icon"><svg class="nx-icon"><use [attr.href]="'/icons.svg#' + iconName(item)"></use></svg></span>
+            <span class="nx-lookup-row-copy"><strong>{{ item.title }}</strong>@if (item.subtitle) { <small>{{ item.subtitle }}</small> }@if (item.detail) { <em>{{ item.detail }}</em> }</span>
+            @if (item.badge) { <span class="nx-lookup-badge">{{ item.badge }}</span> }
+            <span class="nx-lookup-select"><svg class="nx-icon"><use href="/icons.svg#chevron-right"></use></svg></span>
+          </button>
+        } @empty {
+          <div class="nx-lookup-empty"><span><svg class="nx-icon"><use href="/icons.svg#search"></use></svg></span><strong>Sin coincidencias</strong><p>{{ emptyText }}</p></div>
+        }
+      </div>
+
+      <app-pagination [totalItems]="filteredItems.length" [pageSize]="pageSize" [page]="page" (pageChange)="changePage($event)"></app-pagination>
+    </section>
+  </div>
+}

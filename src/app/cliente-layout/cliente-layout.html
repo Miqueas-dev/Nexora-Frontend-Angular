@@ -1,0 +1,30 @@
+@if (usuario$ | async; as usuario) {
+  <div class="nx-client-shell">
+    <header class="nx-client-header">
+      <a routerLink="/cliente/inicio" class="nx-client-brand" (click)="cerrarMenu()">
+        <span class="nx-brand-mark">N</span>
+        <span><strong>Nexora</strong><small>Portal del cliente</small></span>
+      </a>
+
+      <button type="button" class="nx-client-menu-toggle" aria-label="Abrir navegación" (click)="menuOpen = !menuOpen">
+        <svg class="nx-icon"><use href="/icons.svg#menu"></use></svg>
+      </button>
+
+      <nav class="nx-client-nav" [class.open]="menuOpen" aria-label="Portal del cliente">
+        <a routerLink="/cliente/inicio" routerLinkActive="active" (click)="cerrarMenu()">Inicio</a>
+        <a routerLink="/cliente/productos" routerLinkActive="active" (click)="cerrarMenu()">Productos</a>
+        <a routerLink="/cliente/mis-compras" routerLinkActive="active" (click)="cerrarMenu()">Mis compras</a>
+        <a routerLink="/cliente/mi-cuenta" routerLinkActive="active" (click)="cerrarMenu()">Mi cuenta</a>
+      </nav>
+
+      <div class="nx-client-account">
+        <span class="nx-client-avatar">{{ usuario.nombre.charAt(0).toUpperCase() }}</span>
+        <div><strong>{{ usuario.nombre }}</strong><small>Cliente Nexora</small></div>
+        <button type="button" class="nx-client-logout" (click)="cerrarSesion()" title="Cerrar sesión"><svg class="nx-icon"><use href="/icons.svg#logout"></use></svg></button>
+      </div>
+    </header>
+
+    <main class="nx-client-main"><router-outlet></router-outlet></main>
+    <footer class="nx-client-footer"><span>Nexora · Portal del cliente</span><small>Consulta productos y revisa tus compras en un espacio seguro.</small></footer>
+  </div>
+}

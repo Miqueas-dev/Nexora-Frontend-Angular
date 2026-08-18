@@ -1,0 +1,50 @@
+<section class="nx-page-head">
+  <div><span class="nx-eyebrow">Administración</span><h1>Usuarios</h1><p>Gestiona identidades, perfiles y estado de acceso dentro de Nexora.</p></div>
+  <button type="button" class="btn nx-btn-primary" (click)="abrirNuevo()"><svg class="nx-icon"><use href="/icons.svg#plus"></use></svg> Nuevo usuario</button>
+</section>
+
+<div class="nx-toolbar">
+  <div class="nx-search"><span><svg class="nx-icon"><use href="/icons.svg#search"></use></svg></span><input #buscar type="search" class="form-control" placeholder="Buscar por DNI, nombre, correo o tipo..." [value]="filtro" (input)="cambiarFiltro(buscar.value)"></div>
+  <span class="nx-count-pill">{{ usuariosFiltrados.length }} registros</span>
+</div>
+
+<div class="nx-panel nx-table-panel">
+  @if (cargando) { <div class="nx-loading-card plain"><span class="spinner-border spinner-border-sm"></span><span>Cargando usuarios...</span></div> }
+  @else if (!usuariosFiltrados.length) { <div class="nx-empty-state"><span><svg class="nx-icon"><use href="/icons.svg#users"></use></svg></span><h3>Sin usuarios para mostrar</h3><p>Ajusta la búsqueda o registra un nuevo usuario.</p></div> }
+  @else {
+    <div class="table-responsive">
+      <table class="table nx-table align-middle"><thead><tr><th>Usuario</th><th>DNI</th><th>Correo</th><th>Tipo</th><th>Estado</th><th>Fecha nac.</th><th class="text-end">Acciones</th></tr></thead>
+        <tbody>@for (usuario of usuariosPagina; track usuario.idUsuario) {
+          <tr><td><div class="nx-person"><span class="nx-person-icon"><svg class="nx-icon"><use href="/icons.svg#users"></use></svg></span><div><strong>{{ nombreCompleto(usuario) }}</strong><small>ID {{ usuario.idUsuario }}</small></div></div></td><td>{{ usuario.dniUsuario }}</td><td>{{ usuario.correoUsuario }}</td><td><span class="nx-chip">{{ usuario.tipo.descripcion }}</span></td><td><span class="nx-status" [class.active]="usuario.estado.descripcion.toLowerCase() === 'activo'"><i></i>{{ usuario.estado.descripcion }}</span></td><td>{{ usuario.fecnacUsuario | date:'dd/MM/yyyy' }}</td><td class="text-end"><button type="button" class="nx-icon-btn" title="Editar usuario" aria-label="Editar usuario" (click)="editar(usuario)"><svg class="nx-icon"><use href="/icons.svg#edit"></use></svg></button><button type="button" class="nx-icon-btn danger" title="Eliminar usuario" aria-label="Eliminar usuario" (click)="eliminar(usuario)"><svg class="nx-icon"><use href="/icons.svg#trash"></use></svg></button></td></tr>
+        }</tbody>
+      </table>
+    </div>
+  }
+  <app-pagination [totalItems]="usuariosFiltrados.length" [pageSize]="pageSize" [page]="page" (pageChange)="page = $event"></app-pagination>
+</div>
+
+@if (formularioVisible) {
+  <div class="nx-dialog-backdrop">
+    <section class="nx-dialog nx-dialog-lg" nxModalKeyboard [nxModalSubmitEnabled]="form.valid && !fechaFutura() && !guardando" (nxModalClose)="cerrarFormulario()" (nxModalSubmit)="guardar()" (click)="$event.stopPropagation()">
+      <div class="nx-dialog-head"><div><span class="nx-eyebrow">Usuarios Nexora</span><h2>{{ editandoId ? 'Editar usuario' : 'Registrar usuario' }}</h2><p>Completa la identidad y selecciona sus parámetros mediante los buscadores de Nexora.</p></div><button type="button" class="nx-dialog-close" aria-label="Cerrar" (click)="cerrarFormulario()"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg></button></div>
+      <form [formGroup]="form" (ngSubmit)="guardar()" novalidate>
+        <div class="nx-form-grid">
+          <div class="nx-form-group"><label>DNI *</label><input class="form-control" formControlName="dniUsuario" maxlength="8" inputmode="numeric" placeholder="8 dígitos">@if(form.controls.dniUsuario.touched && form.controls.dniUsuario.invalid){<small class="nx-field-error">El DNI debe contener exactamente 8 dígitos.</small>}</div>
+          <div class="nx-form-group"><label>Nombre *</label><input class="form-control" formControlName="nombreUsuario" maxlength="25" placeholder="Nombre">@if(form.controls.nombreUsuario.touched && form.controls.nombreUsuario.invalid){<small class="nx-field-error">El nombre es obligatorio y admite hasta 25 caracteres.</small>}</div>
+          <div class="nx-form-group"><label>Apellido paterno *</label><input class="form-control" formControlName="apepatUsuario" maxlength="25" placeholder="Apellido paterno">@if(form.controls.apepatUsuario.touched && form.controls.apepatUsuario.invalid){<small class="nx-field-error">El apellido paterno es obligatorio.</small>}</div>
+          <div class="nx-form-group"><label>Apellido materno *</label><input class="form-control" formControlName="apematUsuario" maxlength="25" placeholder="Apellido materno">@if(form.controls.apematUsuario.touched && form.controls.apematUsuario.invalid){<small class="nx-field-error">El apellido materno es obligatorio.</small>}</div>
+          <div class="nx-form-group nx-span-2"><label>Correo electrónico *</label><input type="email" class="form-control" formControlName="correoUsuario" maxlength="45" placeholder="usuario@nexora.com">@if(form.controls.correoUsuario.touched && form.controls.correoUsuario.invalid){<small class="nx-field-error">Ingresa un correo válido de hasta 45 caracteres.</small>}</div>
+          <div class="nx-form-group"><label>Contraseña {{ editandoId ? '(opcional)' : '*' }}</label><input type="password" class="form-control" formControlName="claveUsuario" autocomplete="new-password" [placeholder]="editandoId ? 'Dejar vacío para conservar' : 'Contraseña'">@if(form.controls.claveUsuario.touched && form.controls.claveUsuario.invalid){<small class="nx-field-error">La contraseña es obligatoria al registrar.</small>}</div>
+          <div class="nx-form-group"><label>Fecha de nacimiento *</label><input type="date" class="form-control" formControlName="fecnacUsuario">@if(form.controls.fecnacUsuario.touched && (form.controls.fecnacUsuario.invalid || fechaFutura())){<small class="nx-field-error">Selecciona una fecha válida que no sea futura.</small>}</div>
+          <div class="nx-form-group"><label>Tipo de usuario *</label><button type="button" class="nx-lookup-field" [class.invalid]="form.controls.idTipo.touched && form.controls.idTipo.invalid" (click)="abrirSelector('tipo')"><span class="nx-lookup-field-icon"><svg class="nx-icon"><use href="/icons.svg#user-check"></use></svg></span><span><small>Perfil de acceso</small><strong>{{ tipoSeleccionado?.descripcion || 'Seleccionar tipo' }}</strong></span><svg class="nx-icon nx-lookup-field-action"><use href="/icons.svg#search"></use></svg></button>@if(form.controls.idTipo.touched && form.controls.idTipo.invalid){<small class="nx-field-error">El tipo es obligatorio.</small>}</div>
+          <div class="nx-form-group"><label>Estado *</label><button type="button" class="nx-lookup-field" [class.invalid]="form.controls.idEstado.touched && form.controls.idEstado.invalid" (click)="abrirSelector('estado')"><span class="nx-lookup-field-icon state"><svg class="nx-icon"><use href="/icons.svg#check-circle"></use></svg></span><span><small>Disponibilidad</small><strong>{{ estadoSeleccionado?.descripcion || 'Seleccionar estado' }}</strong></span><svg class="nx-icon nx-lookup-field-action"><use href="/icons.svg#search"></use></svg></button>@if(form.controls.idEstado.touched && form.controls.idEstado.invalid){<small class="nx-field-error">El estado es obligatorio.</small>}</div>
+        </div>
+        
+        <div class="nx-dialog-actions"><button type="button" class="btn nx-btn-ghost" (click)="cerrarFormulario()"><svg class="nx-icon"><use href="/icons.svg#x"></use></svg> Cancelar</button><button type="submit" class="btn nx-btn-primary" [disabled]="guardando || form.invalid || fechaFutura()">@if(guardando){<span class="spinner-border spinner-border-sm"></span> Guardando...}@else{<svg class="nx-icon"><use href="/icons.svg#check"></use></svg> Guardar usuario}</button></div>
+      </form>
+
+      <app-lookup-modal [visible]="selectorActivo === 'tipo'" title="Seleccionar tipo de usuario" description="Busca el perfil que deseas asignar y selecciónalo con un clic." searchPlaceholder="Buscar tipo de usuario..." [items]="tipoItems" (selected)="seleccionarLookup($event)" (closed)="cerrarSelector()"></app-lookup-modal>
+      <app-lookup-modal [visible]="selectorActivo === 'estado'" title="Seleccionar estado" description="Busca el estado que deseas asignar al usuario." searchPlaceholder="Buscar estado..." [items]="estadoItems" (selected)="seleccionarLookup($event)" (closed)="cerrarSelector()"></app-lookup-modal>
+    </section>
+  </div>
+}

@@ -1,0 +1,36 @@
+<div class="nx-public-auth-page">
+  <header class="nx-auth-public-header">
+    <a routerLink="/" class="nx-public-brand"><span class="nx-brand-mark">N</span><span><strong>Nexora</strong><small>Tecnología y confianza</small></span></a>
+    <div class="nx-auth-public-actions"><span>¿Ya tienes una cuenta?</span><a routerLink="/login" class="btn nx-btn-outline">Iniciar sesión</a></div>
+  </header>
+
+  <main class="nx-register-shell">
+    <section class="nx-register-copy">
+      <span class="nx-kicker"><i></i> Cuenta Nexora</span>
+      <h1>Tu historial de compras,<br><span>siempre contigo.</span></h1>
+      <p>Crea tu cuenta para consultar productos y revisar los comprobantes que nuestros vendedores registren a tu nombre.</p>
+      <div class="nx-register-benefits">
+        <article><span><svg class="nx-icon"><use href="/icons.svg#package"></use></svg></span><div><strong>Catálogo actualizado</strong><small>Consulta precios, marcas y disponibilidad.</small></div></article>
+        <article><span><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg></span><div><strong>Mis compras</strong><small>Revisa tus comprobantes desde un solo lugar.</small></div></article>
+        <article><span><svg class="nx-icon"><use href="/icons.svg#shield"></use></svg></span><div><strong>Cuenta protegida</strong><small>Tu acceso y permisos se validan en el servidor.</small></div></article>
+      </div>
+    </section>
+
+    <section class="nx-register-card">
+      <header><span class="nx-eyebrow">Registro de cliente</span><h2>Crea tu cuenta</h2><p>Completa tus datos personales. Nexora asignará automáticamente tu perfil de Cliente.</p></header>
+      <form [formGroup]="form" (ngSubmit)="registrar()" novalidate class="nx-register-form">
+        <div class="nx-form-grid">
+          <div class="nx-form-group"><label for="dni">DNI</label><input id="dni" class="form-control" formControlName="dniUsuario" maxlength="8" inputmode="numeric" placeholder="8 dígitos">@if(form.controls.dniUsuario.touched&&form.controls.dniUsuario.invalid){<small class="nx-field-error">Ingresa un DNI válido de 8 dígitos.</small>}</div>
+          <div class="nx-form-group"><label for="fecha">Fecha de nacimiento</label><input id="fecha" type="date" class="form-control" formControlName="fecnacUsuario">@if(form.controls.fecnacUsuario.touched&&form.controls.fecnacUsuario.invalid){<small class="nx-field-error">Selecciona tu fecha de nacimiento.</small>}</div>
+          <div class="nx-form-group"><label for="nombre">Nombres</label><input id="nombre" class="form-control" formControlName="nombreUsuario" maxlength="45" placeholder="Luis">@if(form.controls.nombreUsuario.touched&&form.controls.nombreUsuario.invalid){<small class="nx-field-error">El nombre es obligatorio.</small>}</div>
+          <div class="nx-form-group"><label for="apepat">Apellido paterno</label><input id="apepat" class="form-control" formControlName="apepatUsuario" maxlength="45" placeholder="Pérez">@if(form.controls.apepatUsuario.touched&&form.controls.apepatUsuario.invalid){<small class="nx-field-error">El apellido paterno es obligatorio.</small>}</div>
+          <div class="nx-form-group"><label for="apemat">Apellido materno</label><input id="apemat" class="form-control" formControlName="apematUsuario" maxlength="45" placeholder="López">@if(form.controls.apematUsuario.touched&&form.controls.apematUsuario.invalid){<small class="nx-field-error">El apellido materno es obligatorio.</small>}</div>
+          <div class="nx-form-group"><label for="correoRegistro">Correo electrónico</label><input id="correoRegistro" type="email" class="form-control" formControlName="correoUsuario" maxlength="45" autocomplete="email" placeholder="nombre@correo.com">@if(form.controls.correoUsuario.touched&&form.controls.correoUsuario.invalid){<small class="nx-field-error">Ingresa un correo válido.</small>}</div>
+          <div class="nx-form-group nx-span-2"><label for="claveRegistro">Contraseña</label><div class="nx-input-wrap"><span><svg class="nx-icon"><use href="/icons.svg#lock"></use></svg></span><input id="claveRegistro" [type]="mostrarClave?'text':'password'" class="form-control" formControlName="claveUsuario" autocomplete="new-password" placeholder="Mínimo 6 caracteres"><button type="button" class="nx-password-toggle" (click)="mostrarClave=!mostrarClave"><svg class="nx-icon"><use [attr.href]="mostrarClave?'/icons.svg#eye-off':'/icons.svg#eye'"></use></svg>{{ mostrarClave?'Ocultar':'Mostrar' }}</button></div>@if(form.controls.claveUsuario.touched&&form.controls.claveUsuario.invalid){<small class="nx-field-error">La contraseña debe tener al menos 6 caracteres.</small>}</div>
+        </div>
+        <button type="submit" class="btn nx-btn-primary nx-register-submit" [disabled]="enviando">@if(enviando){<span class="spinner-border spinner-border-sm"></span> Creando cuenta...}@else{Crear mi cuenta <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg>}</button>
+      </form>
+      <small class="nx-register-footnote"><svg class="nx-icon"><use href="/icons.svg#info"></use></svg> El registro público crea únicamente cuentas de Cliente activas.</small>
+    </section>
+  </main>
+</div>
