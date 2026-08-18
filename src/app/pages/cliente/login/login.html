@@ -1,10 +1,69 @@
 <div class="nx-customer-login-page">
   <header class="nx-auth-public-header">
-    <a routerLink="/" class="nx-public-brand"><span class="nx-brand-mark">N</span><span><strong>Nexora</strong><small>Portal del cliente</small></span></a>
-    <div class="nx-auth-public-actions"><span>¿Aún no tienes cuenta?</span><a routerLink="/registro" class="btn nx-btn-primary">Crear cuenta</a></div>
+    <a routerLink="/" class="nx-public-brand"><span
+        class="nx-brand-mark">N</span><span><strong>Nexora</strong><small>Portal del cliente</small></span></a>
+    <div class="nx-auth-public-actions"><span>¿Aún no tienes cuenta?</span><a routerLink="/registro"
+        class="btn nx-btn-primary">Crear cuenta</a></div>
   </header>
   <main class="nx-customer-login-shell">
-    <section class="nx-customer-login-copy"><span class="nx-kicker"><i></i> Tu espacio Nexora</span><h1>Consulta productos y<br><span>mantén tus compras cerca.</span></h1><p>Inicia sesión para revisar el catálogo y los comprobantes registrados a tu nombre.</p><div class="nx-customer-login-points"><span><svg class="nx-icon"><use href="/icons.svg#package"></use></svg> Catálogo actualizado</span><span><svg class="nx-icon"><use href="/icons.svg#receipt"></use></svg> Historial de compras</span><span><svg class="nx-icon"><use href="/icons.svg#shield"></use></svg> Sesión protegida</span></div></section>
-    <section class="nx-customer-login-card"><div class="nx-login-form-icon"><svg class="nx-icon"><use href="/icons.svg#user-check"></use></svg></div><span class="nx-eyebrow">Acceso cliente</span><h2>Bienvenido de nuevo</h2><p>Ingresa con la cuenta que registraste en Nexora.</p><form [formGroup]="form" (ngSubmit)="ingresar()" class="nx-login-form"><div class="nx-form-group"><label for="correoCliente">Correo electrónico</label><div class="nx-input-wrap"><span><svg class="nx-icon"><use href="/icons.svg#mail"></use></svg></span><input id="correoCliente" type="email" class="form-control" formControlName="correo" autocomplete="username" placeholder="nombre@correo.com"></div></div><div class="nx-form-group"><label for="claveCliente">Contraseña</label><div class="nx-input-wrap"><span><svg class="nx-icon"><use href="/icons.svg#lock"></use></svg></span><input id="claveCliente" [type]="mostrarClave?'text':'password'" class="form-control" formControlName="clave" autocomplete="current-password" placeholder="Tu contraseña"><button type="button" class="nx-password-toggle" (click)="mostrarClave=!mostrarClave"><svg class="nx-icon"><use [attr.href]="mostrarClave?'/icons.svg#eye-off':'/icons.svg#eye'"></use></svg>{{mostrarClave?'Ocultar':'Mostrar'}}</button></div></div><button type="submit" class="btn nx-btn-primary nx-login-submit" [disabled]="enviando">@if(enviando){<span class="spinner-border spinner-border-sm"></span> Ingresando...}@else{Ingresar a mi cuenta <svg class="nx-icon"><use href="/icons.svg#arrow-right"></use></svg>}</button></form><div class="nx-customer-login-links"><a routerLink="/registro">Crear una cuenta</a><span>·</span><a routerLink="/">Volver al inicio</a></div></section>
+    <section class="nx-customer-login-copy"><span class="nx-kicker"><i></i> Tu espacio Nexora</span>
+      <h1>Consulta productos y<br><span>mantén tus compras cerca.</span></h1>
+      <p>Inicia sesión para revisar el catálogo y los comprobantes registrados a tu nombre.</p>
+      <div class="nx-customer-login-points"><span><svg class="nx-icon">
+            <use href="/icons.svg#package"></use>
+          </svg> Catálogo actualizado</span><span><svg class="nx-icon">
+            <use href="/icons.svg#receipt"></use>
+          </svg> Historial de compras</span><span><svg class="nx-icon">
+            <use href="/icons.svg#shield"></use>
+          </svg> Sesión protegida</span></div>
+    </section>
+    <section class="nx-customer-login-card">
+      <div class="nx-login-form-icon"><svg class="nx-icon">
+          <use href="/icons.svg#user-check"></use>
+        </svg></div><span class="nx-eyebrow">Acceso cliente</span>
+      <h2>Bienvenido de nuevo</h2>
+      <p>Ingresa con la cuenta que registraste en Nexora.</p>
+      <form [formGroup]="form" (ngSubmit)="ingresar()" class="nx-login-form">
+        <div class="nx-form-group"><label for="correoCliente">Correo electrónico</label>
+          <div class="nx-input-wrap"><span><svg class="nx-icon">
+                <use href="/icons.svg#mail"></use>
+              </svg></span><input id="correoCliente" type="email" class="form-control" formControlName="correo"
+              maxlength="45" autocomplete="username" placeholder="nombre@correo.com"></div>
+          @if (form.controls.correo.touched && form.controls.correo.invalid){
+          <small class="nx-field-error">
+            <svg class="nx-icon">
+              <use href="/icons.svg#alert-circle"></use>
+            </svg>
+            Ingresa tu correo.
+          </small>
+          }
+        </div>
+
+        <div class="nx-form-group"><label for="claveCliente">Contraseña</label>
+          <div class="nx-input-wrap"><span><svg class="nx-icon">
+                <use href="/icons.svg#lock"></use>
+              </svg></span><input id="claveCliente" [type]="mostrarClave?'text':'password'" class="form-control"
+              formControlName="clave" autocomplete="current-password" placeholder="Tu contraseña"><button type="button"
+              class="nx-password-toggle" (click)="mostrarClave=!mostrarClave"><svg class="nx-icon">
+                <use [attr.href]="mostrarClave?'/icons.svg#eye-off':'/icons.svg#eye'"></use>
+              </svg>{{mostrarClave?'Ocultar':'Mostrar'}}</button></div>
+          @if (form.controls.clave.touched && form.controls.clave.invalid){
+          <small class="nx-field-error">
+            <svg class="nx-icon">
+              <use href="/icons.svg#alert-circle"></use>
+            </svg>
+            Ingresa tu contraseña.
+          </small>
+          }
+        </div>
+        <button type="submit" class="btn nx-btn-primary nx-login-submit" [disabled]="enviando">@if(enviando){<span
+            class="spinner-border spinner-border-sm"></span> Ingresando...}@else{Ingresar a mi cuenta <svg
+            class="nx-icon">
+            <use href="/icons.svg#arrow-right"></use>
+          </svg>}</button>
+      </form>
+      <div class="nx-customer-login-links"><a routerLink="/registro">Crear una cuenta</a><span>·</span><a
+          routerLink="/">Volver al inicio</a></div>
+    </section>
   </main>
 </div>
